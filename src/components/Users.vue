@@ -9,9 +9,6 @@
           <th>first name</th>
           <th>last name</th>
           <th>email</th>
-          <th>friends</th>
-          <th>edit</th>
-          <th>delete</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +18,7 @@
           <td>{{user.firstName}}</td>
           <td>{{user.lastName}}</td>
           <td>{{user.email}}</td>
+          <td><button v-on:click="openLocationsModal(user)" class="btn btn-link btn-sm"><icon name="globe"></icon> {{user.locations.length}}</button></td>
           <td><button v-on:click="openFriendsModal(user)" class="btn btn-link btn-sm"><icon name="users"></icon> {{user.friends.length}}</button></td>
           <td><button v-on:click="openEditModal(user)" class="btn btn-link btn-sm"><icon name="edit"></icon></button></td>
           <td><button v-on:click="deleteUser(user._id)" class="btn btn-link btn-sm text-danger"><icon name="trash"></icon></button></td>
@@ -55,7 +53,7 @@
       </div>
     </b-modal>
 
-   <b-modal id="editFriends" title="Edit Friends" v-model="friendsVisible">
+   <b-modal id="editFriends" title="Friends" v-model="friendsVisible">
       <table class="table">
         <thead>
           <tr>
@@ -78,6 +76,28 @@
         <button v-on:click="friendsVisible=false" class="btn">Cancel</button>
       </div>
     </b-modal>
+
+   <b-modal id="editLocations" title="Locations" v-model="locationsVisible">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="location in edit.locations">
+            <td>{{location._id}}</td>
+            <td>{{location.name}}</td>
+            <td><button v-on:click="deleteLocation(location._id)" class="btn btn-link text-danger btn-sm"><icon name="trash"></icon></button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div slot="modal-footer">
+        <button v-on:click="locationsVisible=false" class="btn">Cancel</button>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -94,6 +114,7 @@ export default {
       editTmp: {},
       editVisible: false,
       friendsVisible: false,
+      locationsVisible: false,
     };
   },
   methods: {
@@ -137,6 +158,20 @@ export default {
         console.log(err);
       }
     },
+    async deleteLocation(id) {
+      try {
+        const { status } = await axios({
+          method: 'delete',
+          url: `http://localhost:3000/api/v0/locations/${id}`,
+          headers: { accept: '*/*' },
+          auth: { username: 'admin', password: '1234' },
+        });
+
+        this.edit.locations = _.filter(this.edit.locations, loc => loc._id !== id);
+      } catch(err) {
+        console.log(err);
+      }
+    },
     openEditModal(user) {
       this.edit = user;
       this.editTmp = Object.assign({}, user);
@@ -146,12 +181,14 @@ export default {
       this.edit = user;
       this.friendsVisible = true;
     },
+    openLocationsModal(user) {
+      this.edit = user;
+      this.locationsVisible = true;
+    },
     async editUser() {
-      console.log('user:', this.edit);
       const user = this.editTmp;
       try {
-        const data = _.pick(user, ['firstName', 'lastName', 'email'])
-        console.log(data);
+        const data = _.diff(user, ['firstName', 'lastName', 'email'])
         const { status } = await axios({
           method: 'patch',
           url: `http://localhost:3000/api/v0/users/${user._id}`,
