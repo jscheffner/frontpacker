@@ -1,5 +1,5 @@
 <template>
-  <b-modal title="Friends" v-model="visible" v-on:change="setVisibility">
+  <b-modal title="Friends" v-model="visible" @change="setVisibility">
     <table class="table">
       <thead>
         <tr>
@@ -14,19 +14,19 @@
           <td>{{friend._id}}</td>
           <td>{{friend.firstName}}</td>
           <td>{{friend.lastName}}</td>
-          <td><button v-on:click="deleteFriend(friend)" class="btn btn-link text-danger btn-sm"><icon name="trash"></icon></button></td>
+          <td><button @click="deleteFriend(friend)" class="btn btn-link text-danger btn-sm"><icon name="trash"></icon></button></td>
         </tr>
       </tbody>
     </table>
     <div slot="modal-footer">
-      <button v-on:click="setVisibility(false)" class="btn">Cancel</button>
+      <button @click="setVisibility(false)" class="btn">Cancel</button>
     </div>
   </b-modal>
 </template>
 
 <script>
-import axios from 'axios';
 import * as _ from 'lodash';
+import { removeFriend } from '../api';
 
 export default {
   name: 'FriendsModal',
@@ -34,28 +34,22 @@ export default {
   methods: {
     async deleteFriend(friend) {
       try {
-        const { status } = await axios({
-          method: 'delete',
-          url: `http://localhost:3000/api/v0/users/${this.user._id}/friends/${friend._id}`,
-          headers: { accept: '*/*' },
-          auth: { username: 'admin', password: '1234' },
-        });
+        const { user, users } = this;
+        await removeFriend(user._id, friend._id);
+        user.friends = _.filter(user.friends, f => friend._id !== f._id);
 
-        const user = Object.create(this.user);
-        const users = Object.create(this.users);
-        user.friends = _.filter(this.user.friends, f => friend._id !== f._id);
-        this.$emit('edit', user);
         const friendUser = _.find(users, { _id: friend._id });
-        friendUser.friends = _.filter(this.user.friends, f => f._id !== friend._id);
-        this.$emit('users', friendUser);
+        friendUser.friends = _.filter(user.friends, f => f._id !== friend._id);
 
-      } catch(err) {
+        this.$emit('update:user', user);
+        this.$emit('update:users', friendUser);
+      } catch (err) {
         console.log(err);
       }
     },
     setVisibility(visibility) {
-      this.$emit('visible', visibility);
-    }
+      this.$emit('update:visible', visibility);
+    },
   },
 };
 </script>

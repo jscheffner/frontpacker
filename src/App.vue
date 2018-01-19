@@ -11,10 +11,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 export default {
   name: 'app',
-  data: {
-    username: '',
-    password: '',
-  },
 };
 </script>
 
