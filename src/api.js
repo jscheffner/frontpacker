@@ -40,7 +40,6 @@ function deleteUser(userId) {
   return axios({
     method: 'delete',
     url: `${baseUrl}/users/${userId}`,
-    headers,
     auth,
   });
 }
