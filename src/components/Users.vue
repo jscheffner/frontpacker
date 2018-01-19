@@ -58,7 +58,7 @@ export default {
         await deleteUser(id);
         this.users = _.filter(this.users, user => user._id !== id);
       } catch (err) {
-        console.log(err);
+        // TODO show error badge
       }
     },
     openEditModal(user) {
@@ -79,8 +79,7 @@ export default {
       const { data } = await getUsers();
       this.users = data;
     } catch (err) {
-      console.log(err);
-      this.users = [];
+      // TODO show error badge
     }
   },
   components: {

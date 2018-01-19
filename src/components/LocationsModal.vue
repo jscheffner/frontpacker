@@ -37,7 +37,7 @@ export default {
         const user = Object.create(this.user);
         user.locations = _.filter(this.user.locations, loc => loc._id !== id);
       } catch (err) {
-        console.log(err);
+        // TODO show error badge
       }
     },
     setVisibility(visibility) {

@@ -44,7 +44,7 @@ export default {
         this.$emit('update:user', user);
         this.$emit('update:users', friendUser);
       } catch (err) {
-        console.log(err);
+        // TODO show error badge
       }
     },
     setVisibility(visibility) {

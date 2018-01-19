@@ -43,7 +43,7 @@ export default {
         this.$emit('update:user', user);
         this.setVisibility(false);
       } catch (err) {
-        console.log(err);
+        // TODO show error badge
       }
     },
     setVisibility(visibility) {
