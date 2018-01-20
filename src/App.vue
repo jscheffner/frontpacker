@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="container">
-    <h1 class="text-primary">Wanderlust Controll Center</h1>
+    <h1 class="text-primary">Wanderlust Control Center</h1>
     <router-view/>
   </div>
 </template>

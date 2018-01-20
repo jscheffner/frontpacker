@@ -22,7 +22,7 @@
           <td><button @click="openLocationsModal(user)" class="btn btn-link btn-sm"><icon name="globe"></icon> {{user.locations.length}}</button></td>
           <td><button @click="openFriendsModal(user)" class="btn btn-link btn-sm"><icon name="users"></icon> {{user.friends.length}}</button></td>
           <td><button @click="openEditModal(user)" class="btn btn-link btn-sm"><icon name="edit"></icon></button></td>
-          <td><button @click="deleteUser(user._id)" class="btn btn-link btn-sm text-danger"><icon name="trash"></icon></button></td>
+          <td><button @click="removeUser(user._id)" class="btn btn-link btn-sm text-danger"><icon name="trash"></icon></button></td>
         </tr>
       </tbody>
     </table>
@@ -53,7 +53,7 @@ export default {
     };
   },
   methods: {
-    async deleteUser(id) {
+    async removeUser(id) {
       try {
         await deleteUser(id);
         this.users = _.filter(this.users, user => user._id !== id);
