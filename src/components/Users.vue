@@ -2,6 +2,8 @@
   <div class="users">
     <h1>Users</h1>
 
+    <b-alert variant="danger" dismissible :show="alert.show" @dismissed="alert.show = false">{{ this.alert.message }}</b-alert>
+
     <table class="table">
       <thead>
         <tr>
@@ -27,9 +29,9 @@
       </tbody>
     </table>
 
-    <user-modal :visible.sync="editVisible" :user.sync="user"></user-modal>
-    <friends-modal :visible.sync="friendsVisible" :user.sync="user" :users.sync="users"></friends-modal>
-    <locations-modal :visible.sync="locationsVisible" :user.sync="user"></locations-modal>
+    <user-modal :visible.sync="editVisible" :user="user" @updateUser="updateUser"></user-modal>
+    <friends-modal :visible.sync="friendsVisible" :user.sync="user" :users="users" @updateUser="updateUser"></friends-modal>
+    <locations-modal :visible.sync="locationsVisible" :user="user" @updateUser="updateUser"></locations-modal>
 
   </div>
 </template>
@@ -50,6 +52,10 @@ export default {
       editVisible: false,
       friendsVisible: false,
       locationsVisible: false,
+      alert: {
+        text: 'Something went wrong',
+        show: false,
+      },
     };
   },
   methods: {
@@ -58,7 +64,7 @@ export default {
         await deleteUser(id);
         this.users = _.filter(this.users, user => user._id !== id);
       } catch (err) {
-        // TODO show error badge
+        this.showAlert('Could not delete user');
       }
     },
     openEditModal(user) {
@@ -73,13 +79,23 @@ export default {
       this.user = user;
       this.locationsVisible = true;
     },
+    updateUser(newUser) {
+      const user = _.find(this.users, { _id: newUser._id });
+      Object.assign(user, newUser);
+    },
+    showAlert(message) {
+      this.alert = {
+        message,
+        show: true,
+      };
+    },
   },
   async mounted() {
     try {
       const { data } = await getUsers();
       this.users = data;
     } catch (err) {
-      // TODO show error badge
+      this.showAlert('Loading users failed.');
     }
   },
   components: {

@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const auth = { username: 'admin', password: '1234' };
-const baseUrl = 'http://localhost:3000/api/v0';
+const baseUrl = 'http://localhost:3000';
 
 function removeFriend(userId, friendId) {
   return axios({

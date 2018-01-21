@@ -1,5 +1,6 @@
 <template>
-     <b-modal title="Locations" v-model="visible" @change="setVisibility">
+     <b-modal title="Locations" :visible="visible" @change="setVisibility">
+     <b-alert variant="danger" dismissible :show="showAlert" @dismissed="showAlert = false">Could not delete location.</b-alert>
       <table class="table">
         <thead>
           <tr>
@@ -29,18 +30,22 @@ import { deleteLocation } from '../api';
 export default {
   name: 'users',
   props: ['user', 'visible'],
+  data() {
+    return { showAlert: false };
+  },
   methods: {
     async deleteLocation(id) {
       try {
         await deleteLocation(id);
-
         const user = Object.create(this.user);
         user.locations = _.filter(this.user.locations, loc => loc._id !== id);
+        this.$emit('updateUser', user);
       } catch (err) {
-        // TODO show error badge
+        this.showAlert = true;
       }
     },
     setVisibility(visibility) {
+      this.showAlert = false;
       this.$emit('update:visible', visibility);
     },
   },
