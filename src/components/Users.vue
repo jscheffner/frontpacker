@@ -9,8 +9,7 @@
         <tr>
           <th>id</th>
           <th>google id</th>
-          <th>first name</th>
-          <th>last name</th>
+          <th>name</th>
           <th>email</th>
         </tr>
       </thead>
@@ -18,8 +17,7 @@
         <tr v-for="user in users">
           <td>{{user._id}}</td>
           <td>{{user.googleId}}</td>
-          <td>{{user.firstName}}</td>
-          <td>{{user.lastName}}</td>
+          <td>{{user.firstName}} {{user.lastName}}</td>
           <td>{{user.email}}</td>
           <td><button @click="openLocationsModal(user)" class="btn btn-link btn-sm"><icon name="globe"></icon> {{user.locations.length}}</button></td>
           <td><button @click="openFriendsModal(user)" class="btn btn-link btn-sm"><icon name="users"></icon> {{user.friends.length}}</button></td>
